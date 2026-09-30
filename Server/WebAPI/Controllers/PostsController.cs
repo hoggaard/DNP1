@@ -7,7 +7,7 @@ namespace WebAPI.Controllers;
 
 [ApiController]
 [Route("[controller]")]
-public class PostsController
+public class PostsController : ControllerBase
 {
     private IPostRepository postRepo;
 
