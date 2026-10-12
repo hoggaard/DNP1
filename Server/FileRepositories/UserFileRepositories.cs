@@ -12,7 +12,7 @@ public class UserFileRepositories : IUserRepository
     {
         if (!File.Exists(filePath))
         {
-            File.WriteAllText(filePath, "{}");
+            File.WriteAllText(filePath, "[]");
         }
     }
     
@@ -78,11 +78,6 @@ public class UserFileRepositories : IUserRepository
             throw new InvalidOperationException(
                 $"User with ID '{id}' not found");
         }
-
-        users.Remove(user);
-        
-        usersAsJson = JsonSerializer.Serialize(users);
-        await File.WriteAllTextAsync(filePath, usersAsJson);
         
         return user;
     }

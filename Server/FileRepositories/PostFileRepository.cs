@@ -12,7 +12,7 @@ public class PostFileRepository : IPostRepository
     {
         if (!File.Exists(filePath))
         {
-            File.WriteAllText(filePath, "{}");
+            File.WriteAllText(filePath, "[]");
         }
     }
     
@@ -80,11 +80,6 @@ public class PostFileRepository : IPostRepository
             throw new InvalidOperationException(
                 $"Post with ID '{id}' not found");
         }
-
-        posts.Remove(post);
-        
-        postsAsJson = JsonSerializer.Serialize(posts);
-        await File.WriteAllTextAsync(filePath, postsAsJson);
 
         return post;
     }

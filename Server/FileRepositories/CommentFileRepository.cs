@@ -12,7 +12,7 @@ public class CommentFileRepository : ICommentRepository
     {
         if (!File.Exists(filePath))
         {
-            File.WriteAllText(filePath, "{}");
+            File.WriteAllText(filePath, "[]");
         }
     }
 
@@ -76,11 +76,6 @@ public class CommentFileRepository : ICommentRepository
             throw new InvalidOperationException(
                 $"Comment with ID '{id}' not found");
         }
-
-        comments.Remove(comment);
-        
-        string commentsAsJson = JsonSerializer.Serialize(comments);
-        await File.WriteAllTextAsync(filePath, commentsAsJson);
         
         return comment;
     }
