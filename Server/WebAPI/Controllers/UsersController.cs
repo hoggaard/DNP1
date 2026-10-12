@@ -8,16 +8,9 @@ namespace WebAPI.Controllers;
 
 [ApiController]
 [Route("[controller]")]
-public class UsersController : ControllerBase
+public class UsersController(IUserRepository userRepo) : ControllerBase
 {
-    private IUserRepository userRepo;
-
-    public UsersController(IUserRepository userRepo)
-    {
-        this.userRepo = userRepo;
-    }
-    
-    [HttpGet("{id}")]
+    [HttpGet("{id:int}")]
     public async Task<ActionResult<UserDTO>> GetSingleUser(int id)
     {
         try
@@ -38,16 +31,17 @@ public class UsersController : ControllerBase
     }
     
     [HttpGet]
-    public ActionResult<List<UserDTO>> GetManyUsers()
+    public async Task<ActionResult<List<UserDTO>>> GetManyUsers()
     {
-        var user = userRepo.GetManyAsync();
-        var userDtos = new List<UserDTO>();
-        user.ToList().ForEach(userDTO => userDtos.Add(new UserDTO
+        var users = userRepo.GetManyAsync();
+
+        var userDtos = users.Select(u => new UserDTO
         {
-            Id = userDTO.Id,
-            Username = userDTO.Username,
-            Email = userDTO.Email
-        }));
+            Id = u.Id,
+            Username = u.Username,
+            Email = u.Email
+        }).ToList();
+
         return Ok(userDtos);
     }
     
@@ -77,7 +71,7 @@ public class UsersController : ControllerBase
         return NoContent();
     }
     
-    [HttpDelete("{id}")]
+    [HttpDelete("{id:int}")]
     public async Task<IActionResult> DeleteUser(int id)
     {
         try
