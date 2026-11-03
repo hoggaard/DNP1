@@ -1,16 +1,31 @@
 ﻿@page "/AddUser"
+@using APIContracts
+@using BlazorApp1.Services
+@using Microsoft.AspNetCore.Http.HttpResults
+@inject IUserService userService
 <PageTitle>AddUser</PageTitle>
 
 <h1>User</h1>
 
-<p>Name</p>
-<input class="input">
+<p>Username</p>
+<input type="text" class="input" @bind="username">
+<p>Password</p>
+<input type="password" class="input" @bind="password">
+<p>Email</p>
+<input type="email" class="input" @bind="email">
+<button @onclick="() => SubmitPressed()">Submit</button>
 
 @code {
-    private int currentCount = 0;
-
-    private void IncrementCount()
+    private string username = string.Empty;
+    private string password = string.Empty;
+    private string email = string.Empty;
+    private void SubmitPressed()
     {
-        currentCount++;
+        userService.AddUserAsync(new CreateUserDTO
+        {
+            Email = email,
+            Password = password,
+            Username = username
+        });
     }
 }
