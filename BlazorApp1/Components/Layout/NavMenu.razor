@@ -1,8 +1,11 @@
-﻿@rendermode InteractiveServer
+﻿@using BlazorApp1.Auth
+@using Microsoft.AspNetCore.Components.Authorization
+@rendermode InteractiveServer
+@inject AuthenticationStateProvider AuthProvider
 
 <div class="flex items-center justify-between h-16 px-4 bg-gray-900 text-white md:justify-start">
     <a class="text-lg font-bold tracking-tight text-white hover:text-gray-200 transition-colors" href="">
-        Simplistic Driving School
+        Post Stupid Stuff
     </a>
     
     <button type="button" 
@@ -39,6 +42,25 @@
                 <span>Create Post</span>
             </NavLink>
         </div>
+        <AuthorizeView>
+            <Authorized>
+                <div>
+                    <NavLink class="flex items-center gap-3 px-3 py-2.5 text-sm font-medium text-gray-300 rounded-lg hover:bg-gray-800 hover:text-white transition-colors cursor-pointer" @onclick="Logout">
+                        <span class="ti ti-logout text-lg text-gray-400" aria-hidden="true"></span>
+                        <span>Logout</span>
+                    </NavLink>
+                </div>
+            </Authorized>
+            <NotAuthorized>
+                <div>
+                    <NavLink class="flex items-center gap-3 px-3 py-2.5 text-sm font-medium text-gray-300 rounded-lg hover:bg-gray-800 hover:text-white transition-colors"
+                             href="Login">
+                        <span class="ti ti-login text-lg text-gray-400" aria-hidden="true"></span>
+                        <span>Login</span>
+                    </NavLink>
+                </div>
+            </NotAuthorized>
+        </AuthorizeView>
     </nav>
 </div>
 
@@ -55,5 +77,10 @@
     private void CollapseNavMenu()
     {
         collapseNavMenu = true;
+    }
+
+    private async Task Logout()
+    {
+        await ((SimpleAuthProvider)AuthProvider).LogoutAsync();
     }
 }

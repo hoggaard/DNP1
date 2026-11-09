@@ -1,9 +1,13 @@
 ﻿@page "/CreatePost"
+@using System.Security.Claims
 @using APIContracts
 @using BlazorApp1.Services
+@using Microsoft.AspNetCore.Authorization
+@using Microsoft.AspNetCore.Components.Authorization
 @using Microsoft.AspNetCore.Http.HttpResults
 @inject IPostService PostService
-@attribute [StreamRendering]
+@rendermode InteractiveServer
+@attribute [Authorize]
 <PageTitle>Post creation</PageTitle>
 
 <h1 class="text-2xl font-bold mb-5">Create a new post</h1>
@@ -23,16 +27,41 @@
 @code {
     private string title = string.Empty;
     private string body = string.Empty;
+    private int userId;
+    
+    [CascadingParameter] public Task<AuthenticationState> State { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        AuthenticationState authenticationState = await State;
+        ClaimsPrincipal claimsPrincipal = authenticationState.User;
+        if(claimsPrincipal.Identity is null || !claimsPrincipal.Identity.IsAuthenticated)
+        {
+            return;
+        }
+        string? userName = claimsPrincipal.Identity?.Name;
+        IEnumerable<Claim> claims = claimsPrincipal.Claims;
+        string userIdAsString = claims.Single(c => c.Type == "Id").Value;
+        userId = int.Parse(userIdAsString);
+    }
+    
     private void SubmitPressed()
     {
-        PostService.AddPostAsync(new CreatePostDTO()
+        try
         {
-            Title = title,
-            Body = body,
-            UserId = 1
-        });
-        
-        title = string.Empty;
-        body = string.Empty;
+            PostService.AddPostAsync(new CreatePostDTO()
+            {
+                Title = title,
+                Body = body,
+                UserId = userId
+            });
+
+            title = string.Empty;
+            body = string.Empty;
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+        }
     }
 }

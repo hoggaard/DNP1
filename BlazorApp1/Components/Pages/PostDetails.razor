@@ -1,9 +1,12 @@
 ﻿@page "/posts/{Id:int}"
+@using System.Security.Claims
 @using APIContracts
 @using BlazorApp1.Services
+@using Microsoft.AspNetCore.Components.Authorization
 @inject IPostService PostService
 @inject IUserService UserService
 @inject ICommentService CommentService
+@rendermode InteractiveServer
 
 <PageTitle>Post (@Id)</PageTitle>
 
@@ -24,9 +27,13 @@ else
     
     <div class="rounded p-6 bg-gray-100 mt-5 shadow">
         <p class="text-xl">Comments</p>
-        <p class="mt-2">Write a comment:</p>
-        <textarea class="w-full p-2 rounded shadow" @bind="comment"></textarea>
-        <button class="rounded-md bg-gray-600 px-4 py-2 font-medium text-white shadow hover:bg-gray-700" @onclick="() => SubmitPressed()">Submit</button>
+        <AuthorizeView>
+            <Authorized>
+                <p class="mt-2">Write a comment:</p>
+                <textarea class="w-full p-2 rounded shadow" @bind="comment"></textarea>
+                <button class="rounded-md bg-gray-600 px-4 py-2 font-medium text-white shadow hover:bg-gray-700" @onclick="() => SubmitPressed()">Submit</button>
+            </Authorized>
+        </AuthorizeView>
         <div class="flex flex-col gap-2 mt-2">
             @foreach (CommentDTO comment in comments)
             {
@@ -50,6 +57,10 @@ else
     private List<CommentDTO>? comments;
     private string comment = string.Empty;
     private Dictionary<int, UserDTO> commentUsers = new();
+    
+    private int userId;
+    
+    [CascadingParameter] public Task<AuthenticationState> State { get; set; }
 
     protected override async Task OnInitializedAsync()
     {
@@ -64,19 +75,37 @@ else
         {
             commentUsers[userId] = await UserService.GetUserAsync(userId);
         }
+        
+        AuthenticationState authenticationState = await State;
+        ClaimsPrincipal claimsPrincipal = authenticationState.User;
+        if(claimsPrincipal.Identity is null || !claimsPrincipal.Identity.IsAuthenticated)
+        {
+            return;
+        }
+        string? userName = claimsPrincipal.Identity?.Name;
+        IEnumerable<Claim> claims = claimsPrincipal.Claims;
+        string userIdAsString = claims.Single(c => c.Type == "Id").Value;
+        userId = int.Parse(userIdAsString);
     }
     
     private void SubmitPressed()
     {
         if (!string.IsNullOrEmpty(comment))
         {
-            CommentService.AddCommentAsync(new CreateCommentDTO()
+            try
             {
-                UserId = 1,
-                PostId = Id,
-                Body = comment
-            });
-            comment = string.Empty;
+                CommentService.AddCommentAsync(new CreateCommentDTO()
+                {
+                    UserId = userId,
+                    PostId = Id,
+                    Body = comment
+                });
+                comment = string.Empty;
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+            }
         }
     }
 }

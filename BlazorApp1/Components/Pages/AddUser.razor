@@ -3,7 +3,7 @@
 @using BlazorApp1.Services
 @using Microsoft.AspNetCore.Http.HttpResults
 @inject IUserService UserService
-@attribute [StreamRendering]
+@rendermode InteractiveServer
 <PageTitle>User creation</PageTitle>
 
 <h1 class="text-2xl font-bold mb-5">Create a new user</h1>
@@ -21,7 +21,7 @@
         <p class="text-lg">Email</p>
         <input type="email" class="input flex rounded-md border border-gray-300 px-3 py-2 text-gray-900 shadow-sm" @bind="email">
     </div>
-    <button class="rounded-md bg-indigo-600 px-4 py-2 font-medium text-white shadow hover:bg-indigo-700" @onclick="() => SubmitPressed()">Submit</button>
+    <button class="rounded-md bg-indigo-600 px-4 py-2 font-medium text-white shadow hover:bg-indigo-700" @onclick="SubmitPressed">Submit</button>
 </div>
 
 @code {
