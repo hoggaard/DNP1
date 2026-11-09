@@ -11,4 +11,8 @@
       <ProjectReference Include="..\APIContracts\APIContracts.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+      <Folder Include="wwwroot\lib\" />
+    </ItemGroup>
+
 </Project>

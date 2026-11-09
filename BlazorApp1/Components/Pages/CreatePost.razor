@@ -1,0 +1,38 @@
+﻿@page "/CreatePost"
+@using APIContracts
+@using BlazorApp1.Services
+@using Microsoft.AspNetCore.Http.HttpResults
+@inject IPostService PostService
+@attribute [StreamRendering]
+<PageTitle>Post creation</PageTitle>
+
+<h1 class="text-2xl font-bold mb-5">Create a new post</h1>
+
+<div class="flex flex-col gap-5 w-fit">
+    <div>
+        <p class="text-lg">Title</p>
+        <input type="text" class="input rounded-md border border-gray-300 px-3 py-2 text-gray-900 shadow-sm" @bind="title">
+    </div>
+    <div>
+        <p class="text-lg">Body</p>
+        <textarea type="" class="input rounded-md border border-gray-300 px-3 py-2 text-gray-900 shadow-sm" @bind="body"></textarea>
+    </div>
+    <button class="rounded-md bg-indigo-600 px-4 py-2 font-medium text-white shadow hover:bg-indigo-700" @onclick="() => SubmitPressed()">Submit</button>
+</div>
+
+@code {
+    private string title = string.Empty;
+    private string body = string.Empty;
+    private void SubmitPressed()
+    {
+        PostService.AddPostAsync(new CreatePostDTO()
+        {
+            Title = title,
+            Body = body,
+            UserId = 1
+        });
+        
+        title = string.Empty;
+        body = string.Empty;
+    }
+}

@@ -1,7 +1,44 @@
 ﻿@page "/"
+@using APIContracts
+@using BlazorApp1.Services
+@using Microsoft.AspNetCore.Mvc
+@inject IPostService PostService
+@inject IUserService UserService
+@attribute [StreamRendering]
 
 <PageTitle>Home</PageTitle>
 
-<h1>Hello, world!</h1>
+@if (posts == null || !posts.Any())
+{
+    <p>Loading posts...</p>
+}
+else
+{
+    @foreach (PostDTO post in posts)
+    {
+        <a href="/posts/@post.Id">
+            <div class="mb-4 rounded bg-gray-100 p-5 shadow cursor-pointer">
+                <div class="flex content-center justify-between mb-2">
+                    <p class="text-xl">@post.Title</p>
+                    <p>@post.Created</p>
+                </div>
+                <p>@@@(users.TryGetValue(post.UserId, out var u) ? u?.Username : "Deleted User")</p>
+            </div>
+        </a>
+    }
+}
 
-Welcome to your new app.
+@code {
+    private List<PostDTO> posts = new();
+    private Dictionary<int, UserDTO?> users = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        posts = await PostService.GetAllPostsAsync();
+
+        foreach (var id in posts.Select(p => p.UserId).Distinct())
+        {
+            users[id] = await UserService.GetUserAsync(id);
+        }
+    }
+}

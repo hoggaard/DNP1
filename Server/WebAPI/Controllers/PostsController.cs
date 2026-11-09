@@ -127,7 +127,10 @@ public class PostsController(IPostRepository postRepo, IUserRepository userRepo)
         {
             Title = postDto.Title,
             Body = postDto.Body,
-            UserId = postDto.UserId
+            UserId = postDto.UserId,
+            Likes = 0,
+            Dislikes = 0,
+            Created = DateTime.UtcNow,
         };
         
         Post created = await postRepo.AddAsync(post);

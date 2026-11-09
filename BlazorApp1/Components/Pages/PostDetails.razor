@@ -1,0 +1,82 @@
+﻿@page "/posts/{Id:int}"
+@using APIContracts
+@using BlazorApp1.Services
+@inject IPostService PostService
+@inject IUserService UserService
+@inject ICommentService CommentService
+
+<PageTitle>Post (@Id)</PageTitle>
+
+@if (post == null || comments == null)
+{
+    <p>Loading post #@Id...</p>
+}
+else
+{
+    <div class="rounded p-6 shadow">
+        <div class="flex content-center justify-between mb-2">
+            <p class="text-lg">@@@user?.Username</p>
+            <p>@post.Created</p>
+        </div>
+        <p class="text-xl">@post.Title</p>
+        <p>@post.Body</p>
+    </div>
+    
+    <div class="rounded p-6 bg-gray-100 mt-5 shadow">
+        <p class="text-xl">Comments</p>
+        <p class="mt-2">Write a comment:</p>
+        <textarea class="w-full p-2 rounded shadow" @bind="comment"></textarea>
+        <button class="rounded-md bg-gray-600 px-4 py-2 font-medium text-white shadow hover:bg-gray-700" @onclick="() => SubmitPressed()">Submit</button>
+        <div class="flex flex-col gap-2 mt-2">
+            @foreach (CommentDTO comment in comments)
+            {
+                <div class="rounded bg-gray-200 p-6 shadow">
+                    <div class="flex content-center justify-between mb-2">
+                        <p class="text-xl">@commentUsers[comment.UserId].Username</p>
+                        <p>@comment.Created</p>
+                    </div>
+                    <p>@comment.Body</p>
+                </div>
+            }
+        </div>
+    </div>
+}
+
+@code {
+    [Parameter]
+    public int Id { get; set; }
+    private PostDTO? post;
+    private UserDTO? user;
+    private List<CommentDTO>? comments;
+    private string comment = string.Empty;
+    private Dictionary<int, UserDTO> commentUsers = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        post = await PostService.GetPostAsync(Id);
+        user = await UserService.GetUserAsync(post.UserId);
+        
+        comments = await CommentService.GetCommentsFromPostAsync(post.Id);
+        
+        var userIds = comments.Select(c => c.UserId).Distinct();
+        
+        foreach (var userId in userIds)
+        {
+            commentUsers[userId] = await UserService.GetUserAsync(userId);
+        }
+    }
+    
+    private void SubmitPressed()
+    {
+        if (!string.IsNullOrEmpty(comment))
+        {
+            CommentService.AddCommentAsync(new CreateCommentDTO()
+            {
+                UserId = 1,
+                PostId = Id,
+                Body = comment
+            });
+            comment = string.Empty;
+        }
+    }
+}

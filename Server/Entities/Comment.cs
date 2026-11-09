@@ -9,4 +9,8 @@ public class Comment
     public DateTime Created { get; set; }
     public int PostId { get; set; }
     public int UserId { get; set; }
+    override public string ToString()
+    {
+        return "Id: " + Id + ", Body: " + Body;
+    }
 }

@@ -26,6 +26,20 @@ public class HttpUserService : IUserService
         })!;
     }
 
+    public async Task<UserDTO> GetUserAsync(int userId)
+    {
+        HttpResponseMessage httpResponseMessage = await client.GetAsync($"users/{userId}");
+        string response = await httpResponseMessage.Content.ReadAsStringAsync();
+        if (!httpResponseMessage.IsSuccessStatusCode)
+        {
+            throw new Exception(response);
+        }
+        return JsonSerializer.Deserialize<UserDTO>(response, new JsonSerializerOptions
+        {
+            PropertyNameCaseInsensitive = true
+        })!;
+    }
+
     public async Task UpdateUserAsync(int id, UpdateUserDTO request)
     {
         HttpResponseMessage httpResponseMessage = await client.PutAsJsonAsync("users", request);

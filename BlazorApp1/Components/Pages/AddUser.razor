@@ -2,18 +2,27 @@
 @using APIContracts
 @using BlazorApp1.Services
 @using Microsoft.AspNetCore.Http.HttpResults
-@inject IUserService userService
-<PageTitle>AddUser</PageTitle>
+@inject IUserService UserService
+@attribute [StreamRendering]
+<PageTitle>User creation</PageTitle>
 
-<h1>User</h1>
+<h1 class="text-2xl font-bold mb-5">Create a new user</h1>
 
-<p>Username</p>
-<input type="text" class="input" @bind="username">
-<p>Password</p>
-<input type="password" class="input" @bind="password">
-<p>Email</p>
-<input type="email" class="input" @bind="email">
-<button @onclick="() => SubmitPressed()">Submit</button>
+<div class="flex flex-col gap-5 w-fit">
+    <div>
+        <p class="text-lg">Username</p>
+        <input type="text" class="input rounded-md border border-gray-300 px-3 py-2 text-gray-900 shadow-sm" @bind="username">
+    </div>
+    <div>
+        <p class="text-lg">Password</p>
+        <input type="password" class="input rounded-md border border-gray-300 px-3 py-2 text-gray-900 shadow-sm" @bind="password">
+    </div>
+    <div>
+        <p class="text-lg">Email</p>
+        <input type="email" class="input flex rounded-md border border-gray-300 px-3 py-2 text-gray-900 shadow-sm" @bind="email">
+    </div>
+    <button class="rounded-md bg-indigo-600 px-4 py-2 font-medium text-white shadow hover:bg-indigo-700" @onclick="() => SubmitPressed()">Submit</button>
+</div>
 
 @code {
     private string username = string.Empty;
@@ -21,11 +30,14 @@
     private string email = string.Empty;
     private void SubmitPressed()
     {
-        userService.AddUserAsync(new CreateUserDTO
+        UserService.AddUserAsync(new CreateUserDTO
         {
             Email = email,
             Password = password,
             Username = username
         });
+        username = string.Empty;
+        password = string.Empty;
+        email = string.Empty;
     }
 }

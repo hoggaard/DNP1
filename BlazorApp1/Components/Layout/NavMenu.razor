@@ -1,35 +1,59 @@
-﻿<div class="top-row ps-3 navbar navbar-dark">
-    <div class="container-fluid">
-        <a class="navbar-brand" href="">BlazorApp1</a>
-    </div>
+﻿@rendermode InteractiveServer
+
+<div class="flex items-center justify-between h-16 px-4 bg-gray-900 text-white md:justify-start">
+    <a class="text-lg font-bold tracking-tight text-white hover:text-gray-200 transition-colors" href="">
+        Simplistic Driving School
+    </a>
+    
+    <button type="button" 
+            class="p-2 text-gray-400 hover:text-white hover:bg-gray-800 rounded-lg md:hidden transition-colors"
+            @onclick="ToggleNavMenu" 
+            aria-label="Toggle navigation">
+        <span class="ti ti-menu-2 text-xl block"></span>
+    </button>
 </div>
 
-<input type="checkbox" title="Navigation menu" class="navbar-toggler"/>
-
-<div class="nav-scrollable" onclick="document.querySelector('.navbar-toggler').click()">
-    <nav class="nav flex-column">
-        <div class="nav-item px-3">
-            <NavLink class="nav-link" href="" Match="NavLinkMatch.All">
-                <span class="bi bi-house-door-fill-nav-menu" aria-hidden="true"></span> Home
-            </NavLink>
-        </div>
-
-        <div class="nav-item px-3">
-            <NavLink class="nav-link" href="counter">
-                <span class="bi bi-plus-square-fill-nav-menu" aria-hidden="true"></span> Counter
-            </NavLink>
-        </div>
-
-        <div class="nav-item px-3">
-            <NavLink class="nav-link" href="weather">
-                <span class="bi bi-list-nested-nav-menu" aria-hidden="true"></span> Weather
+<div class="@NavMenuCssClass md:block bg-gray-900 h-full overflow-y-auto" @onclick="CollapseNavMenu">
+    <nav class="flex flex-col gap-1 p-3">
+        <div>
+            <NavLink class="flex items-center gap-3 px-3 py-2.5 text-sm font-medium text-gray-300 rounded-lg hover:bg-gray-800 hover:text-white transition-colors"
+                     href="" 
+                     Match="NavLinkMatch.All">
+                <span class="ti ti-home text-lg text-gray-400" aria-hidden="true"></span>
+                <span>Home</span>
             </NavLink>
         </div>
         
-        <div class="nav-item px-3">
-            <NavLink class="nav-link" href="AddUser">
-                <span class="bi bi-list-nested-nav-menu" aria-hidden="true"></span> AddUser
+        <div>
+            <NavLink class="flex items-center gap-3 px-3 py-2.5 text-sm font-medium text-gray-300 rounded-lg hover:bg-gray-800 hover:text-white transition-colors"
+                     href="AddUser">
+                <span class="ti ti-user-plus text-lg text-gray-400" aria-hidden="true"></span>
+                <span>Add User</span>
+            </NavLink>
+        </div>
+        
+        <div>
+            <NavLink class="flex items-center gap-3 px-3 py-2.5 text-sm font-medium text-gray-300 rounded-lg hover:bg-gray-800 hover:text-white transition-colors"
+                     href="CreatePost">
+                <span class="ti ti-note text-lg text-gray-400" aria-hidden="true"></span>
+                <span>Create Post</span>
             </NavLink>
         </div>
     </nav>
 </div>
+
+@code {
+    private bool collapseNavMenu = true;
+
+    private string NavMenuCssClass => collapseNavMenu ? "hidden" : "block";
+
+    private void ToggleNavMenu()
+    {
+        collapseNavMenu = !collapseNavMenu;
+    }
+
+    private void CollapseNavMenu()
+    {
+        collapseNavMenu = true;
+    }
+}

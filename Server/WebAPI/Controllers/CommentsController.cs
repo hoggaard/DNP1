@@ -131,7 +131,10 @@ public class CommentsController(ICommentRepository commentRepo, IUserRepository 
         {
             Body = commentDto.Body,
             UserId = commentDto.UserId,
-            PostId = commentDto.PostId
+            PostId = commentDto.PostId,
+            Likes = 0,
+            Dislikes = 0,
+            Created = DateTime.Now
         };
         
         Comment created = await commentRepo.AddAsync(comment);

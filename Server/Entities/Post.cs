@@ -11,7 +11,7 @@ public class Post
     
     public int UserId { get; set; }
 
-    public override string ToString()
+    override public string ToString()
     {
         return $"Id: {Id}, Title: {Title}, Body: {Body}, Dislikes: {Dislikes}, Likes: {Likes}, Created: {Created}";
     }
