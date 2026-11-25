@@ -1,6 +1,7 @@
 using APIContracts;
 using Entities;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using RepositoryContracts;
 
 namespace WebAPI.Controllers;
@@ -64,18 +65,19 @@ public class CommentsController(ICommentRepository commentRepo, IUserRepository 
             {
                 query = query.Where(p => p.UserId == userId.Value);
             }
-            
-            var comments = new List<CommentDTO>();
-            query.ToList().ForEach(comment => comments.Add(new CommentDTO
-            {
-                Id = comment.Id,
-                Body = comment.Body,
-                Likes = comment.Likes,
-                Dislikes = comment.Dislikes,
-                Created = comment.Created,
-                PostId = comment.PostId,
-                UserId = comment.UserId
-            }));
+
+            var comments = await query
+                .Select(comment => new CommentDTO
+                {
+                    Id = comment.Id,
+                    Body = comment.Body,
+                    Likes = comment.Likes,
+                    Dislikes = comment.Dislikes,
+                    Created = comment.Created,
+                    PostId = comment.PostId,
+                    UserId = comment.UserId
+                })
+                .ToListAsync();
             
             return Ok(comments);
         }

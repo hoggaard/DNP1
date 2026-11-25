@@ -1,6 +1,7 @@
 ﻿using APIContracts;
 using Entities;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using RepositoryContracts;
 
 namespace WebAPI.Controllers;
@@ -13,7 +14,7 @@ public class AuthController(IUserRepository userRepo) : ControllerBase
     [Route("Login")]
     public async Task<ActionResult<UserDTO>> Login([FromBody] LoginUserDTO request)
     {
-        List<User> users = userRepo.GetManyAsync().ToList();
+        List<User> users = await userRepo.GetManyAsync().ToListAsync();
         foreach (var u in users)
         {
             if (u.Username.Equals(request.Username))

@@ -2,6 +2,7 @@ using APIContracts;
 using Entities;
 using FileRepositories;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using RepositoryContracts;
 
 namespace WebAPI.Controllers;
@@ -64,16 +65,18 @@ public class PostsController(IPostRepository postRepo, IUserRepository userRepo)
             query = query.Where(p => p.Title.Contains(title, StringComparison.OrdinalIgnoreCase));
         }
         
-        var result = query.Select(post => new PostDTO
-        {
-            Id = post.Id,
-            Body = post.Body,
-            Title = post.Title,
-            Likes = post.Likes,
-            Dislikes = post.Dislikes,
-            Created = post.Created,
-            UserId = post.UserId
-        }).ToList();
+        var result = query
+            .Select(post => new PostDTO
+            {
+                Id = post.Id,
+                Body = post.Body,
+                Title = post.Title,
+                Likes = post.Likes,
+                Dislikes = post.Dislikes,
+                Created = post.Created,
+                UserId = post.UserId
+            })
+            .ToListAsync();
 
         return Ok(result);
     }

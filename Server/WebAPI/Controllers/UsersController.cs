@@ -2,6 +2,7 @@ using APIContracts;
 using Entities;
 using FileRepositories;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using RepositoryContracts;
 
 namespace WebAPI.Controllers;
@@ -112,7 +113,7 @@ public class UsersController(IUserRepository userRepo) : ControllerBase
 
     private async Task<bool> VerifyUserNameIsAvailableAsync(string userName)
     {
-        var users = userRepo.GetManyAsync().ToList();
+        var users = await userRepo.GetManyAsync().ToListAsync();
         bool available = true;
         users.ForEach(user =>
         {
