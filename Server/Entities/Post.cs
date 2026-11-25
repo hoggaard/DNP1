@@ -10,6 +10,11 @@ public class Post
     public DateTime Created { get; set; }
     
     public int UserId { get; set; }
+    
+    //relationships
+    public ICollection<Comment> Comments { get; set; }
+    
+    public Post(){}  // for EFC
 
     override public string ToString()
     {

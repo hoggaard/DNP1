@@ -46,7 +46,7 @@ public class UsersController(IUserRepository userRepo) : ControllerBase
     }
     
     [HttpPut("{id:int}")]
-    public async Task<ActionResult<User>> UpdateUser(int id, [FromBody] UpdateUserDTO userDto)
+    public async Task<ActionResult> UpdateUser(int id, [FromBody] UpdateUserDTO userDto)
     {
         if (id != userDto.Id)
         {
@@ -86,7 +86,7 @@ public class UsersController(IUserRepository userRepo) : ControllerBase
     }
     
     [HttpPost]
-    public async Task<ActionResult<User>> AddUser([FromBody] CreateUserDTO request)
+    public async Task<ActionResult<UserDTO>> AddUser([FromBody] CreateUserDTO request)
     {
         if (!await VerifyUserNameIsAvailableAsync(request.Username))
         {
